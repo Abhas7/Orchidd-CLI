@@ -1,0 +1,240 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f1f5f9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Screen gradient -->
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Button gradient -->
+    <linearGradient id="buttonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Badge gradient -->
+    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Soft shadow -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="4" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.15"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bgGradient)"/>
+  
+  <!-- Subtle decorative elements -->
+  <circle cx="120" cy="80" r="60" fill="#6366f1" opacity="0.04"/>
+  <circle cx="720" cy="520" r="80" fill="#6366f1" opacity="0.03"/>
+  <circle cx="680" cy="100" r="40" fill="#6366f1" opacity="0.05"/>
+  
+  <!-- Laptop shadow -->
+  <ellipse cx="520" cy="415" rx="180" ry="30" fill="#000000" opacity="0.12" filter="url(#softShadow)"/>
+  
+  <!-- Laptop Base -->
+  <rect x="320" y="395" width="400" height="30" fill="#1e293b" rx="6"/>
+  <rect x="330" y="400" width="380" height="20" fill="#0f172a" rx="4"/>
+  
+  <!-- Laptop Screen Frame -->
+  <g filter="url(#shadow)">
+    <path d="M 330 110 L 690 110 L 700 395 L 320 395 Z" fill="#334155" rx="8"/>
+    <path d="M 340 120 L 680 120 L 685 385 L 330 385 Z" fill="#475569" rx="6"/>
+  </g>
+  
+  <!-- Laptop Screen Display -->
+  <g>
+    <rect x="350" y="135" width="330" height="240" fill="url(#screenGrad)" rx="8"/>
+    
+    <!-- Screen bezel highlight -->
+    <rect x="350" y="135" width="330" height="3" fill="#e2e8f0" opacity="0.5" rx="8"/>
+    
+    <!-- Browser chrome -->
+    <rect x="350" y="135" width="330" height="40" fill="#ffffff" rx="8"/>
+    <rect x="350" y="175" width="330" height="1" fill="#e2e8f0"/>
+    
+    <!-- Browser controls -->
+    <circle cx="365" cy="155" r="5" fill="#ef4444"/>
+    <circle cx="380" cy="155" r="5" fill="#f59e0b"/>
+    <circle cx="395" cy="155" r="5" fill="#10b981"/>
+    
+    <!-- Address bar -->
+    <rect x="410" y="148" width="200" height="14" fill="#f1f5f9" rx="7"/>
+    <text x="420" y="157" font-size="9" fill="#64748b" font-family="system-ui, -apple-system, sans-serif">orbital.dev/login</text>
+    
+    <!-- Login form container -->
+    <g transform="translate(380, 200)">
+      <!-- Form title -->
+      <text x="155" y="20" font-size="18" fill="#1e293b" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">Welcome Back</text>
+      <text x="155" y="35" font-size="11" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">Sign in to your account</text>
+      
+      <!-- Email field -->
+      <text x="0" y="65" font-size="10" fill="#475569" font-family="system-ui, -apple-system, sans-serif" font-weight="500">Email</text>
+      <rect x="0" y="70" width="310" height="36" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6"/>
+      <rect x="10" y="80" width="290" height="16" fill="#f8fafc" rx="3"/>
+      
+      <!-- Password field -->
+      <text x="0" y="125" font-size="10" fill="#475569" font-family="system-ui, -apple-system, sans-serif" font-weight="500">Password</text>
+      <rect x="0" y="130" width="310" height="36" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6"/>
+      <rect x="10" y="140" width="250" height="16" fill="#f8fafc" rx="3"/>
+      <circle cx="280" cy="148" r="6" fill="#cbd5e1"/>
+      
+      <!-- Sign in button -->
+      <rect x="0" y="180" width="310" height="38" fill="url(#buttonGrad)" rx="6" filter="url(#shadow)"/>
+      <text x="155" y="201" font-size="13" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle">Sign In</text>
+      
+      <!-- Divider -->
+      <line x1="0" y1="235" x2="310" y2="235" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="155" y="250" font-size="10" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle">or continue with</text>
+      
+      <!-- GitHub button -->
+      <rect x="0" y="260" width="310" height="36" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" rx="6"/>
+      <circle cx="30" cy="278" r="8" fill="#1e293b"/>
+      <text x="155" y="281" font-size="12" fill="#1e293b" font-family="system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle">GitHub</text>
+    </g>
+  </g>
+  
+  <!-- Unique modern tech person illustration -->
+  <g filter="url(#softShadow)">
+    <!-- Head with modern hairstyle -->
+    <circle cx="150" cy="190" r="28" fill="#fbbf24"/>
+    <circle cx="150" cy="190" r="26" fill="#fcd34d"/>
+    
+    <!-- Modern textured hair with volume -->
+    <path d="M 122 190 Q 115 155 135 150 Q 150 148 165 150 Q 185 155 178 190" fill="#2d1b0e"/>
+    <path d="M 125 190 Q 118 165 140 160 Q 150 158 160 160 Q 180 165 175 190" fill="#3d2818"/>
+    <path d="M 128 190 Q 120 170 145 165 Q 150 163 155 165 Q 175 170 172 190" fill="#4a3420"/>
+    
+    <!-- Headphones -->
+    <ellipse cx="125" cy="185" rx="18" ry="22" fill="#1e293b" opacity="0.8"/>
+    <ellipse cx="175" cy="185" rx="18" ry="22" fill="#1e293b" opacity="0.8"/>
+    <path d="M 143 185 Q 150 175 157 185" stroke="#6366f1" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Face features - more expressive -->
+    <circle cx="142" cy="185" r="2.5" fill="#1e293b"/>
+    <circle cx="158" cy="185" r="2.5" fill="#1e293b"/>
+    <!-- Glasses reflection -->
+    <ellipse cx="142" cy="185" rx="8" ry="6" fill="none" stroke="#6366f1" stroke-width="1.5" opacity="0.4"/>
+    <ellipse cx="158" cy="185" rx="8" ry="6" fill="none" stroke="#6366f1" stroke-width="1.5" opacity="0.4"/>
+    <path d="M 142 200 Q 150 205 158 200" stroke="#3b2f1f" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Modern hoodie with tech aesthetic -->
+    <path d="M 90 255 Q 90 235 150 230 Q 210 235 210 255 L 205 345 L 95 345 Z" fill="#6366f1"/>
+    <path d="M 90 255 Q 90 245 150 240 Q 210 245 210 255" fill="#4f46e5" opacity="0.5"/>
+    
+    <!-- Hood -->
+    <path d="M 100 250 Q 100 220 150 215 Q 200 220 200 250" fill="#4f46e5"/>
+    <path d="M 105 245 Q 105 225 150 220 Q 195 225 195 245" fill="#6366f1" opacity="0.6"/>
+    
+    <!-- Hoodie pocket -->
+    <rect x="120" y="280" width="60" height="35" fill="#4f46e5" rx="4"/>
+    <path d="M 120 295 L 180 295" stroke="#6366f1" stroke-width="1" opacity="0.5"/>
+    
+    <!-- Tech pattern on hoodie -->
+    <circle cx="130" cy="300" r="2" fill="#818cf8" opacity="0.6"/>
+    <circle cx="150" cy="300" r="2" fill="#818cf8" opacity="0.6"/>
+    <circle cx="170" cy="300" r="2" fill="#818cf8" opacity="0.6"/>
+    
+    <!-- Left arm - reaching toward laptop -->
+    <ellipse cx="80" cy="275" rx="14" ry="40" fill="#fbbf24" transform="rotate(-15 80 275)"/>
+    <ellipse cx="80" cy="275" rx="12" ry="38" fill="#fcd34d" transform="rotate(-15 80 275)"/>
+    
+    <!-- Right arm - relaxed position -->
+    <ellipse cx="220" cy="275" rx="14" ry="40" fill="#fbbf24" transform="rotate(10 220 275)"/>
+    <ellipse cx="220" cy="275" rx="12" ry="38" fill="#fcd34d" transform="rotate(10 220 275)"/>
+    
+    <!-- Hands - more detailed -->
+    <ellipse cx="75" cy="315" rx="9" ry="11" fill="#fbbf24" transform="rotate(-20 75 315)"/>
+    <ellipse cx="225" cy="315" rx="9" ry="11" fill="#fbbf24" transform="rotate(15 225 315)"/>
+    
+    <!-- Modern joggers -->
+    <rect x="125" y="345" width="20" height="60" fill="#1e293b" rx="6"/>
+    <rect x="155" y="345" width="20" height="60" fill="#1e293b" rx="6"/>
+    
+    <!-- Ankle cuffs -->
+    <rect x="125" y="395" width="20" height="8" fill="#0f172a" rx="4"/>
+    <rect x="155" y="395" width="20" height="8" fill="#0f172a" rx="4"/>
+    
+    <!-- Modern sneakers -->
+    <ellipse cx="135" cy="410" rx="12" ry="8" fill="#6366f1"/>
+    <ellipse cx="165" cy="410" rx="12" ry="8" fill="#6366f1"/>
+    <ellipse cx="135" cy="410" rx="10" ry="6" fill="#4f46e5"/>
+    <ellipse cx="165" cy="410" rx="10" ry="6" fill="#4f46e5"/>
+    
+    <!-- Shoe details -->
+    <path d="M 123 410 Q 135 405 147 410" stroke="#818cf8" stroke-width="1" fill="none"/>
+    <path d="M 153 410 Q 165 405 177 410" stroke="#818cf8" stroke-width="1" fill="none"/>
+    
+    <!-- Tech accessories - smartwatch -->
+    <ellipse cx="75" cy="300" rx="6" ry="8" fill="#1e293b" transform="rotate(-20 75 300)"/>
+    <rect x="72" y="295" width="6" height="10" fill="#6366f1" rx="1" transform="rotate(-20 75 300)"/>
+    
+    <!-- Laptop interaction line (connecting person to laptop) -->
+    <path d="M 210 280 Q 250 270 320 200" stroke="#6366f1" stroke-width="2" fill="none" opacity="0.2" stroke-dasharray="5,5"/>
+  </g>
+  
+  <!-- Security badge with enhanced design -->
+  <g filter="url(#shadow)">
+    <!-- Outer glow -->
+    <circle cx="650" cy="200" r="75" fill="#6366f1" opacity="0.1"/>
+    
+    <!-- Badge circle -->
+    <circle cx="650" cy="200" r="65" fill="url(#badgeGrad)"/>
+    <circle cx="650" cy="200" r="60" fill="#4f46e5"/>
+    
+    <!-- Inner highlight -->
+    <circle cx="645" cy="195" r="55" fill="#6366f1" opacity="0.3"/>
+    
+    <!-- Shield with lock icon -->
+    <g transform="translate(650, 200)">
+      <!-- Shield shape -->
+      <path d="M 0 -35 L -20 -25 L -20 5 Q -20 15 -10 20 Q 0 25 10 20 Q 20 15 20 5 L 20 -25 Z" 
+            fill="#ffffff" opacity="0.95"/>
+      
+      <!-- Lock body -->
+      <rect x="-12" y="-5" width="24" height="20" fill="none" stroke="#6366f1" stroke-width="2.5" rx="2"/>
+      
+      <!-- Lock shackle -->
+      <path d="M -8 -5 Q -8 -12 0 -15 Q 8 -12 8 -5" 
+            fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/>
+      
+      <!-- Keyhole -->
+      <circle cx="0" cy="3" r="3" fill="#6366f1"/>
+    </g>
+  </g>
+  
+  <!-- Decorative accent elements -->
+  <line x1="580" y1="175" x2="720" y2="175" stroke="#6366f1" stroke-width="2" opacity="0.2" stroke-linecap="round"/>
+  <line x1="580" y1="225" x2="720" y2="225" stroke="#6366f1" stroke-width="2" opacity="0.2" stroke-linecap="round"/>
+</svg>
