@@ -293,37 +293,31 @@ async function pollForToken(authClient, deviceCode, clientId, initialIntervalue)
                             pollingInterval += 5;
                             break;
                         case "access_denied":
-                            console.error("Access was denied by the user");
+                            spinner.stop();
+                            reject(new Error("Access was denied by the user"));
                             return;
                         case "expired_token":
-                            console.error("The device code has expired. Please try again.");
+                            spinner.stop();
+                            reject(new Error("The device code has expired. Please try again."));
                             return;
                         default:
-                            spinner.stop()
-                            logger.error(`Error: ${error.error_description}`);
-                            process.exit(1)
+                            spinner.stop();
+                            reject(new Error(error.error_description || "Unknown error during polling"));
+                            return;
                     }
-
                 }
 
-
-
-
             } catch (error) {
-
                 spinner.stop();
-                logger.error(`Network error: ${error.message}`);
-                process.exit(1);
-
+                reject(error);
+                return;
             }
 
-            setTimeout(poll, pollingInterval * 1000)
+            setTimeout(poll, pollingInterval * 1000);
         };
 
-        setTimeout(poll, pollingInterval * 1000)
+        setTimeout(poll, 0); // Start polling immediately or on next tick
     });
-
-
 }
 export async function logoutAction() {
     intro(chalk.bold("👋 Logout"));
@@ -392,12 +386,15 @@ export const login = new Command("login")
     .option("--server-url <url>", "The Better Auth server URL", URL)
     .option("--client-id <id>", "The OAuth client ID", CLIENT_ID)
     .action(loginAction)
+    .allowExcessArguments();
 
 export const logout = new Command("logout")
     .description("Logout and clear stored credentials")
-    .action(logoutAction);
+    .action(logoutAction)
+    .allowExcessArguments();
 
 export const whoami = new Command("whoami")
     .description("Show current authenticated user")
     .option("--server-url <url>", "The Better Auth server URL", URL)
-    .action(whoamiAction);
+    .action(whoamiAction)
+    .allowExcessArguments();

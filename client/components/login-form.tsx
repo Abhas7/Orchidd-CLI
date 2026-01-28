@@ -33,12 +33,20 @@ export const LoginForm = () => {
                 variant={"outline"}
                 className="w-full h-full"
                 type="button"
-                onClick={() => authClient.signIn.social({
-                  provider: "github",
-                  callbackURL: "http://localhost:3000",
+                onClick={() => {
+                  const urlParams = new URLSearchParams(window.location.search);
+                  let callbackURL = urlParams.get("callbackURL") || "http://localhost:3000/device";
 
-                })}
+                  // Ensure callbackURL is absolute for social login
+                  if (callbackURL.startsWith("/")) {
+                    callbackURL = window.location.origin + callbackURL;
+                  }
 
+                  authClient.signIn.social({
+                    provider: "github",
+                    callbackURL: callbackURL,
+                  });
+                }}
               >
                 <Image src={"/github-logo.svg"} alt="Github" height={16} width={16}
                   className="size-4 dark:invert" />

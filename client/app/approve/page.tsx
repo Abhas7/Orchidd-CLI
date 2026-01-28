@@ -26,7 +26,8 @@ const DeviceApprovalPage = () => {
   // Redirect unauthenticated users away from the approve page
   useEffect(() => {
     if (!isPending && !data?.session && !data?.user) {
-      router.push("/sign-in")
+      const currentURL = window.location.href;
+      router.push(`/sign-in?callbackURL=${encodeURIComponent(currentURL)}`)
     }
   }, [data, isPending, router])
 
@@ -50,17 +51,17 @@ const DeviceApprovalPage = () => {
     })
 
     try {
-      toast.loading("Approving Devive...", { id: "loading" })
+      toast.loading("Approving Device...", { id: "loading" })
       await authClient.device.approve({
         userCode: userCode!
       })
 
       toast.dismiss("loading")
-      toast.success("Device Aapproved successfully")
+      toast.success("Device Approved successfully")
       router.push("/")
 
     } catch (error) {
-      toast.error("Failed to apporve")
+      toast.error("Failed to approve")
 
     }
     finally {
@@ -73,23 +74,28 @@ const DeviceApprovalPage = () => {
 
   const handleDeny = async () => {
     setIsProcessing({
-      approve: true,
-      deny: false
+      approve: false,
+      deny: true
     })
 
     try {
-      toast.loading("Approving Device...", { id: "loading" })
+      toast.loading("Denying Device...", { id: "loading" })
+
+      // Perform the deny action
       await authClient.device.deny({
         userCode: userCode!
       })
 
-      toast.dismiss("deny")
-      toast.success("Oops! Device denied to apporve")
-      router.push("/")
+      // Sign out so the user sees the sign-in page instead of the dashboard
+      await authClient.signOut();
+
+      toast.dismiss("loading")
+      toast.success("Device access denied")
+      router.push("/sign-in")
 
     } catch (error) {
       toast.error("Failed to deny device")
-
+      toast.dismiss("loading")
     }
     finally {
       setIsProcessing({

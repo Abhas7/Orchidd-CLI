@@ -6,6 +6,7 @@ import prisma from "../../../lib/db.js";
 import { select, text, isCancel, spinner as clackSpinner } from "@clack/prompts";
 import { AIService } from "../../ai/google-service.js";
 import { startChat } from "../../chat/chat-with-ai.js";
+import { startToolChat } from "../../chat/chat-with-ai-tool.js";
 
 
 
@@ -73,10 +74,10 @@ const wakeUpAction = async () => {
 
     switch (choice) {
         case "chat":
-            startChat("chat");
+            await startChat("chat");
             break;
         case "tool":
-            console.log(chalk.green("tool is selected"));
+            await startToolChat();
             break;
         case "agent":
             console.log(chalk.yellow("Agentic mode selected"))

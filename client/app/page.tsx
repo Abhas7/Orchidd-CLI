@@ -4,19 +4,17 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data, isPending } = authClient.useSession();
   const router = useRouter();
 
-  if (isPending) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Spinner />
-      </div>
-    );
-  }
-
+  useEffect(() => {
+    if (!isPending && !data?.session) {
+      router.push("/sign-in");
+    }
+  }, [data, isPending, router]);
 
   if (isPending) {
     return (
@@ -26,8 +24,7 @@ export default function Home() {
     );
   }
 
-  if (!data?.session && !data?.user) {
-    router.push("/sign-in");
+  if (!data?.session) {
     return null;
   }
 
@@ -49,7 +46,7 @@ export default function Home() {
             {/* Green online indicator */}
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-zinc-900 z-20"></div>
           </div>
-          
+
           <div className="text-center space-y-1">
             <h1 className="text-3xl font-bold text-white truncate">
               Welcome, {data?.user?.name || "User"}
