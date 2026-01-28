@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
-import dotev from "dotenv"
+import dotenv from "dotenv"
 import chalk from "chalk"
 import figlet from "figlet"
+import { wakeUp } from "./commands/ai/wakeUp.js";
+
 
 
 import { Command } from "commander";
@@ -11,7 +13,7 @@ import { login, logout, whoami } from "./commands/auth/login.js";
 
 
 
-dotev.config();
+dotenv.config();
 
 
 async function main() {
@@ -19,31 +21,35 @@ async function main() {
     console.log(
         chalk.cyan(
             figlet.textSync("Orbital CLI", {
-                font:"Standard",
-                horizontalLayout:"default"
+                font: "Standard",
+                horizontalLayout: "default"
             })
         )
     )
-    
+
     console.log(chalk.red("A cli based AI tool \n"))
 
     const program = new Command("orbitals")
 
     program.version("0.0.0")
-    .description("Orbital CLI - A cli Based AI Tool")
-    .addCommand(login)
-    .addCommand(logout)
-    .addCommand(whoami)
-    // Default action shows help
-  program.action(()=>{
-    program.help();
-  });
+        .description("Orbital CLI - A cli Based AI Tool")
+        .addCommand(login)
+        .addCommand(logout)
+        .addCommand(whoami)
+        .addCommand(wakeUp)
 
-  program.parse()
+    // Default action shows help
+    program
+        .action((_args, command) => {
+            command.help();
+        })
+        .allowExcessArguments();
+
+    program.parse()
 
 }
 
-main().catch((err) =>{
+main().catch((err) => {
     console.log(chalk.red("Error running orbital CLI:"), err)
     process.exit(1)
 
