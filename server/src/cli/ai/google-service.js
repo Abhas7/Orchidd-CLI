@@ -3,6 +3,7 @@ import { streamText, generateObject } from "ai";
 import { config } from "../../config/google.config.js";
 import chalk from "chalk";
 
+
 export class AIService {
   constructor() {
     if (!config.googleApiKey) {

@@ -32,18 +32,18 @@ function printSystem(message) {
 function displayFileTree(files, folderName) {
   printSystem(chalk.cyan('\n📂 Project Structure:'));
   printSystem(chalk.white(`${folderName}/`));
-  
+
   const filesByDir = {};
   files.forEach(file => {
     const parts = file.path.split('/');
     const dir = parts.length > 1 ? parts.slice(0, -1).join('/') : '';
-    
+
     if (!filesByDir[dir]) {
       filesByDir[dir] = [];
     }
     filesByDir[dir].push(parts[parts.length - 1]);
   });
-  
+
   Object.keys(filesByDir).sort().forEach(dir => {
     if (dir) {
       printSystem(chalk.white(`├── ${dir}/`));
@@ -63,19 +63,19 @@ function displayFileTree(files, folderName) {
  */
 async function createApplicationFiles(baseDir, folderName, files) {
   const appDir = path.join(baseDir, folderName);
-  
+
   await fs.mkdir(appDir, { recursive: true });
   printSystem(chalk.cyan(`\n📁 Created directory: ${folderName}/`));
-  
+
   for (const file of files) {
     const filePath = path.join(appDir, file.path);
     const fileDir = path.dirname(filePath);
-    
+
     await fs.mkdir(fileDir, { recursive: true });
     await fs.writeFile(filePath, file.content, 'utf8');
     printSystem(chalk.green(`  ✓ ${file.path}`));
   }
-  
+
   return appDir;
 }
 
@@ -86,9 +86,9 @@ export async function generateApplication(description, aiService, cwd = process.
   try {
     printSystem(chalk.cyan('\n🤖 Agent Mode: Generating your application...\n'));
     printSystem(chalk.gray(`Request: ${description}\n`));
-    
+
     printSystem(chalk.magenta('🤖 Generating structured output...\n'));
-    
+
 
     const result = await generateObject({
       model: aiService.model,
@@ -113,29 +113,29 @@ Provide:
 - Setup commands (for example: cd folder, npm install, npm run dev OR just open index.html)
 - Make it visually appealing and functional`,
     });
-    
+
     const application = result.object;
-    
+
     printSystem(chalk.green(`\n✅ Generated: ${application.folderName}\n`));
     printSystem(chalk.gray(`Description: ${application.description}\n`));
-    
+
     if (!application.files || application.files.length === 0) {
       throw new Error('No files were generated');
     }
-    
+
     printSystem(chalk.green(`Files: ${application.files.length}\n`));
-    
+
     // Display file tree
     displayFileTree(application.files, application.folderName);
-    
+
     // Create application directory and files
     printSystem(chalk.cyan('\n📝 Creating files...\n'));
     const appDir = await createApplicationFiles(cwd, application.folderName, application.files);
-    
+
     // Display results
     printSystem(chalk.green.bold(`\n✨ Application created successfully!\n`));
     printSystem(chalk.cyan(`📁 Location: ${chalk.bold(appDir)}\n`));
-    
+
     // Display setup commands
     if (application.setupCommands && application.setupCommands.length > 0) {
       printSystem(chalk.cyan('📋 Next Steps:\n'));
@@ -147,7 +147,7 @@ Provide:
     } else {
       printSystem(chalk.yellow('ℹ️  No setup commands provided\n'));
     }
-    
+
     return {
       folderName: application.folderName,
       appDir,
@@ -155,7 +155,7 @@ Provide:
       commands: application.setupCommands || [],
       success: true,
     };
-    
+
   } catch (err) {
     printSystem(chalk.red(`\n❌ Error generating application: ${err.message}\n`));
     if (err.stack) {

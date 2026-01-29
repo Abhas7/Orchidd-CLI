@@ -1,6 +1,5 @@
 import chalk from "chalk";
 import boxen from "boxen";
-import path from "path";
 import { text, isCancel, cancel, intro, outro, confirm } from "@clack/prompts";
 import { AIService } from "../ai/google-service.js";
 import { ChatService } from "../../service/chat.service.js";
