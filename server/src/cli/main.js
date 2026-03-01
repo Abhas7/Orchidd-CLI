@@ -13,10 +13,35 @@ import { login, logout, whoami } from "./commands/auth/login.js";
 
 
 
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Explicitly point to the .env file in the server root
+dotenv.config({ path: path.join(__dirname, "../../.env") });
+
+// Handle global errors and unhandled rejections to prevent silent crashes
+process.on("unhandledRejection", (reason, promise) => {
+    console.error(chalk.red("\n❌ Unhandled Rejection at:"), promise);
+    console.error(chalk.red("Reason:"), reason);
+});
+
+process.on("uncaughtException", (error) => {
+    console.error(chalk.red("\n❌ Uncaught Exception:"));
+    console.error(error);
+    process.exit(1);
+});
 
 
 async function main() {
+    // Debug logging for .env
+    const envPath = path.join(__dirname, "../../.env");
+    console.log(chalk.gray(`[DEBUG] Loading .env from: ${envPath}`));
+    console.log(chalk.gray(`[DEBUG] API Key starts with: ${process.env.GOOGLE_GENERATIVE_AI_API_KEY ? process.env.GOOGLE_GENERATIVE_AI_API_KEY.slice(0, 5) : "MISSING"}`));
+    console.log(chalk.gray(`[DEBUG] Model set in env: ${process.env.ORBITAL_MODEL || "gemini-1.5-flash"}`));
+
     // Display Banner
     console.log(
         chalk.cyan(
@@ -54,4 +79,3 @@ main().catch((err) => {
     process.exit(1)
 
 })
-

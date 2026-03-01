@@ -12,7 +12,9 @@ export class AIService {
 
     this.model = google(config.model, {
       apiKey: config.googleApiKey,
+      apiVersion: "v1", // Using v1 instead of the default v1beta
     });
+
   }
 
   /**
@@ -25,6 +27,10 @@ export class AIService {
    */
   async sendMessage(messages, onChunk, tools = undefined, onToolCall = null) {
     try {
+      console.log(chalk.gray(`[DEBUG] API Key: ${config.googleApiKey ? config.googleApiKey.slice(0, 5) + "..." : "EMPTY"}`));
+      console.log(chalk.gray(`[DEBUG] Model: ${config.model}`));
+      console.log(chalk.gray(`[DEBUG] Messages being sent: ${JSON.stringify(messages, null, 2)}`));
+
       const streamConfig = {
         model: this.model,
         messages: messages,
@@ -35,42 +41,94 @@ export class AIService {
       // Add tools if provided with maxSteps for multi-step tool calling
       if (tools && Object.keys(tools).length > 0) {
         streamConfig.tools = tools;
-        streamConfig.maxSteps = 5; // Allow up to 5 tool call steps
+        streamConfig.maxSteps = 5;
 
         console.log(chalk.gray(`[DEBUG] Tools enabled: ${Object.keys(tools).join(', ')}`));
       }
 
       const result = streamText(streamConfig);
 
+      // The result of streamText is handled below through stream iteration and awaiting the result.
+
+
       let fullResponse = "";
+      let hasError = false;
 
       // Stream text chunks
-      for await (const chunk of result.textStream) {
-        fullResponse += chunk;
-        if (onChunk) {
-          onChunk(chunk);
+      try {
+        for await (const chunk of result.textStream) {
+          fullResponse += chunk;
+          if (onChunk) {
+            onChunk(chunk);
+          }
+        }
+      } catch (streamIterationError) {
+        hasError = true;
+        console.error(chalk.red("\n❌ Error during stream iteration:"));
+        console.error(chalk.red(`  Message: ${streamIterationError.message}`));
+
+        if (streamIterationError.name === 'AI_APICallError' && streamIterationError.statusCode === 404) {
+          console.error(chalk.yellow("  👉 Logic: The model name might be incorrect or not available for your API key."));
+        } else if (streamIterationError.name === 'AI_APICallError' && streamIterationError.statusCode === 429) {
+          console.error(chalk.yellow("  👉 Logic: You have exceeded your API quota. Please check your plan and usage."));
+        } else if (streamIterationError.name === 'AI_APICallError' && streamIterationError.statusCode === 403) {
+          console.error(chalk.yellow("  👉 Logic: API key is invalid or lacks permissions."));
+        } else if (streamIterationError.name === 'AI_APICallError') {
+          console.error(chalk.yellow(`  👉 Logic: An API call error occurred with status code ${streamIterationError.statusCode}.`));
+        }
+
+        if (!fullResponse) {
+          fullResponse = "I'm sorry, I encountered an error while communicating with the AI service. Please try again in a moment.";
         }
       }
 
-      // IMPORTANT: Await the result to get access to steps, toolCalls, etc.
-      const fullResult = await result;
+      // Finalize the result
+      let fullResult;
+      try {
+        fullResult = await result;
+      } catch (streamError) {
+        if (streamError.name === 'AI_NoOutputGeneratedError' || streamError.name === 'AI_APICallError') {
+          console.error(chalk.yellow("\n⚠️  AI SDK Error: No output generated or API call failed."));
+          console.error(chalk.gray(`  Error Name: ${streamError.name}`));
+          console.error(chalk.gray(`  Error Message: ${streamError.message}`));
+
+          if (streamError.name === 'AI_APICallError') {
+            if (streamError.statusCode === 404) {
+              console.error(chalk.yellow("  👉 Logic: The model name might be incorrect or not available for your API key."));
+            } else if (streamError.statusCode === 429) {
+              console.error(chalk.yellow("  👉 Logic: You have exceeded your API quota. Please check your plan and usage."));
+            } else if (streamError.statusCode === 403) {
+              console.error(chalk.yellow("  👉 Logic: API key is invalid or lacks permissions."));
+            } else {
+              console.error(chalk.yellow(`  👉 Logic: An API call error occurred with status code ${streamError.statusCode}.`));
+            }
+          } else {
+            console.error(chalk.gray("  This often happens due to safety filters blocking the response or an empty stream."));
+          }
+
+          return {
+            content: fullResponse || "I'm sorry, I was unable to generate a response. This usually happens if the model is not found, your quota is limited, or safety filters blocked the content.",
+            finishReason: "error",
+            usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+            toolCalls: [],
+            toolResults: [],
+            steps: [],
+          };
+        }
+        throw streamError;
+      }
 
       const toolCalls = [];
       const toolResults = [];
 
-      // Collect tool calls from all steps (if they exist)
       if (fullResult.steps && Array.isArray(fullResult.steps)) {
         for (const step of fullResult.steps) {
           if (step.toolCalls && step.toolCalls.length > 0) {
             for (const toolCall of step.toolCalls) {
               toolCalls.push(toolCall);
-              if (onToolCall) {
-                onToolCall(toolCall);
-              }
+              if (onToolCall) onToolCall(toolCall);
             }
           }
-
-          // Collect tool results
           if (step.toolResults && step.toolResults.length > 0) {
             toolResults.push(...step.toolResults);
           }
@@ -78,7 +136,7 @@ export class AIService {
       }
 
       return {
-        content: fullResponse,
+        content: fullResponse || fullResult.text || "",
         finishReason: fullResult.finishReason,
         usage: fullResult.usage,
         toolCalls,
@@ -86,9 +144,17 @@ export class AIService {
         steps: fullResult.steps,
       };
     } catch (error) {
-      console.error(chalk.red("AI Service Error:"), error.message);
-      console.error(chalk.red("Full error:"), error);
-      throw error;
+      console.error(chalk.red("\n❌ AI Service Error:"), error.name);
+      console.error(chalk.red(`Message: ${error.message}`));
+      if (error.cause) console.error(chalk.gray("Cause:"), JSON.stringify(error.cause, null, 2));
+      return {
+        content: "I'm sorry, an unexpected error occurred. Please check the logs above.",
+        finishReason: "error",
+        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+        toolCalls: [],
+        toolResults: [],
+        steps: [],
+      };
     }
   }
 

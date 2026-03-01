@@ -34,7 +34,7 @@ export const availableTools = [
  */
 export function getEnabledTools() {
   const tools = {};
-  
+
   try {
     for (const toolConfig of availableTools) {
       if (toolConfig.enabled) {
@@ -42,14 +42,14 @@ export function getEnabledTools() {
         tools[toolConfig.id] = toolConfig.getTool();
       }
     }
-    
+
     // Debug logging
     if (Object.keys(tools).length > 0) {
       console.log(chalk.gray(`[DEBUG] Enabled tools: ${Object.keys(tools).join(', ')}`));
     } else {
       console.log(chalk.yellow('[DEBUG] No tools enabled'));
     }
-    
+
     return Object.keys(tools).length > 0 ? tools : undefined;
   } catch (error) {
     console.error(chalk.red('[ERROR] Failed to initialize tools:'), error.message);
@@ -79,16 +79,16 @@ export function toggleTool(toolId) {
  */
 export function enableTools(toolIds) {
   console.log(chalk.gray('[DEBUG] enableTools called with:'), toolIds);
-  
+
   availableTools.forEach(tool => {
     const wasEnabled = tool.enabled;
     tool.enabled = toolIds.includes(tool.id);
-    
+
     if (tool.enabled !== wasEnabled) {
       console.log(chalk.gray(`[DEBUG] ${tool.id}: ${wasEnabled} → ${tool.enabled}`));
     }
   });
-  
+
   const enabledCount = availableTools.filter(t => t.enabled).length;
   console.log(chalk.gray(`[DEBUG] Total tools enabled: ${enabledCount}/${availableTools.length}`));
 }
