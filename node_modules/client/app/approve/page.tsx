@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { authClient } from "@/lib/auth-client"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { CheckCircle, XCircle, Smartphone, Terminal, ShieldCheck } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 
-const DeviceApprovalPage = () => {
+const DeviceApprovalContent = () => {
   const { data, isPending } = authClient.useSession();
   const router = useRouter()
   const SearchParams = useSearchParams();
@@ -173,4 +173,14 @@ const DeviceApprovalPage = () => {
   )
 }
 
-export default DeviceApprovalPage
+export default function DeviceApprovalPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center h-screen bg-black grain mesh-gradient">
+        <Spinner />
+      </div>
+    }>
+      <DeviceApprovalContent />
+    </Suspense>
+  )
+}
