@@ -1,20 +1,37 @@
 import { google } from "@ai-sdk/google";
+import { createOpenAI } from "@ai-sdk/openai";
 import { streamText, generateObject } from "ai";
 import { config } from "../../config/google.config.js";
 import chalk from "chalk";
 
 
 export class AIService {
-  constructor() {
-    if (!config.googleApiKey) {
-      throw new Error("GOOGLE_API_KEY is not set in environment variables");
+  constructor(providerOverride = null) {
+    const provider = providerOverride || config.aiProvider || "google";
+
+    if (provider === "google") {
+      if (!config.googleApiKey) {
+        throw new Error("GOOGLE_API_KEY is not set in environment variables");
+      }
+      this.model = google(config.model, {
+        apiKey: config.googleApiKey,
+        apiVersion: "v1", // Using v1 instead of the default v1beta
+      });
+    } else if (provider === "ollama") {
+      const ollama = createOpenAI({
+        baseURL: config.ollamaBaseUrl,
+        apiKey: "ollama",
+      });
+      this.model = ollama(config.ollamaModel);
+    } else if (provider === "openai") {
+      const openai = createOpenAI({
+        baseURL: config.customBaseUrl,
+        apiKey: config.customApiKey || "placeholder",
+      });
+      this.model = openai(config.customModel);
+    } else {
+      throw new Error(`Unsupported AI provider: ${provider}`);
     }
-
-    this.model = google(config.model, {
-      apiKey: config.googleApiKey,
-      apiVersion: "v1", // Using v1 instead of the default v1beta
-    });
-
   }
 
   /**
@@ -27,8 +44,16 @@ export class AIService {
    */
   async sendMessage(messages, onChunk, tools = undefined, onToolCall = null) {
     try {
-      console.log(chalk.gray(`[DEBUG] API Key: ${config.googleApiKey ? config.googleApiKey.slice(0, 5) + "..." : "EMPTY"}`));
-      console.log(chalk.gray(`[DEBUG] Model: ${config.model}`));
+      const provider = config.aiProvider || "google";
+      console.log(chalk.gray(`[DEBUG] AI Provider: ${provider}`));
+      if (provider === "google") {
+        console.log(chalk.gray(`[DEBUG] API Key: ${config.googleApiKey ? config.googleApiKey.slice(0, 5) + "..." : "EMPTY"}`));
+        console.log(chalk.gray(`[DEBUG] Model: ${config.model}`));
+      } else if (provider === "ollama") {
+        console.log(chalk.gray(`[DEBUG] Model: ${config.ollamaModel} (Ollama @ ${config.ollamaBaseUrl})`));
+      } else if (provider === "openai") {
+        console.log(chalk.gray(`[DEBUG] Model: ${config.customModel} (OpenAI-compatible @ ${config.customBaseUrl})`));
+      }
       console.log(chalk.gray(`[DEBUG] Messages being sent: ${JSON.stringify(messages, null, 2)}`));
 
       const streamConfig = {

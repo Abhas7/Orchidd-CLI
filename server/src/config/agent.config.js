@@ -68,7 +68,29 @@ async function createApplicationFiles(baseDir, folderName, files) {
   printSystem(chalk.cyan(`\n📁 Created directory: ${folderName}/`));
 
   for (const file of files) {
-    const filePath = path.join(appDir, file.path);
+    if (!file.path || file.path.trim() === "" || file.path === "." || file.path === "./") {
+      printSystem(chalk.yellow(`  ⚠️ Skipping empty or root-level file path: "${file.path}"`));
+      continue;
+    }
+
+    const filePath = path.resolve(appDir, file.path);
+
+    // Prevent directory traversal or writing directly to the app directory
+    if (!filePath.startsWith(appDir) || filePath === appDir) {
+      printSystem(chalk.yellow(`  ⚠️ Skipping invalid path: "${file.path}"`));
+      continue;
+    }
+
+    try {
+      const stats = await fs.stat(filePath);
+      if (stats.isDirectory()) {
+        printSystem(chalk.yellow(`  ⚠️ Skipping path that is a directory: "${file.path}"`));
+        continue;
+      }
+    } catch (e) {
+      // File does not exist, safe to write
+    }
+
     const fileDir = path.dirname(filePath);
 
     await fs.mkdir(fileDir, { recursive: true });

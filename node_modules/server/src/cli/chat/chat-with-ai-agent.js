@@ -7,7 +7,7 @@ import { getStoredToken } from "../commands/auth/login.js";
 import prisma from "../../lib/db.js";
 import { generateApplication } from "../../config/agent.config.js";
 
-const aiService = new AIService();
+const aiService = new AIService("google");
 const chatService = new ChatService();
 
 async function getUserFromToken() {

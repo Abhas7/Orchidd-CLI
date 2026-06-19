@@ -5,13 +5,8 @@ import chalk from "chalk"
 import figlet from "figlet"
 import { wakeUp } from "./commands/ai/wakeUp.js";
 
-
-
 import { Command } from "commander";
 import { login, logout, whoami } from "./commands/auth/login.js";
-
-
-
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -39,8 +34,18 @@ async function main() {
     // Debug logging for .env
     const envPath = path.join(__dirname, "../../.env");
     console.log(chalk.gray(`[DEBUG] Loading .env from: ${envPath}`));
-    console.log(chalk.gray(`[DEBUG] API Key starts with: ${process.env.GOOGLE_GENERATIVE_AI_API_KEY ? process.env.GOOGLE_GENERATIVE_AI_API_KEY.slice(0, 5) : "MISSING"}`));
-    console.log(chalk.gray(`[DEBUG] Model set in env: ${process.env.ORBITAL_MODEL || "gemini-1.5-flash"}`));
+    
+    const provider = process.env.AI_PROVIDER || "google";
+    console.log(chalk.gray(`[DEBUG] Active AI Provider: ${provider.toUpperCase()}`));
+    
+    if (provider === "google") {
+        console.log(chalk.gray(`[DEBUG] API Key starts with: ${process.env.GOOGLE_GENERATIVE_AI_API_KEY ? process.env.GOOGLE_GENERATIVE_AI_API_KEY.slice(0, 5) : "MISSING"}`));
+        console.log(chalk.gray(`[DEBUG] Model set in env: ${process.env.ORBITAL_MODEL || "gemini-1.5-flash"}`));
+    } else if (provider === "ollama") {
+        console.log(chalk.gray(`[DEBUG] Model set in env: ${process.env.OLLAMA_MODEL || "qwen2.5-coder:7b"}`));
+    } else if (provider === "openai") {
+        console.log(chalk.gray(`[DEBUG] Model set in env: ${process.env.CUSTOM_AI_MODEL || ""}`));
+    }
 
     // Display Banner
     console.log(

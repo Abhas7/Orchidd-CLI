@@ -1,1 +1,0 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.# dependencies/node_modules/build# testing.nyc_output/coverage/.cache# production.env.production/.env.local# debugnpm-debug.log*yarn-debug.log*yarn-error.log*# misc.DS_Store.env.development.local.env.test.local.eslintcache.vscode/*.log*# local config files for react-scripts.idea/

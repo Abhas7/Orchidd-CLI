@@ -14,6 +14,7 @@ export const auth = betterAuth({
     trustedOrigins: ["http://localhost:3000"],
     plugins: [
         deviceAuthorization({
+            schema: {},
             verificationUri: "/device",
             expiresIn: "30m",
             interval: "5s",
